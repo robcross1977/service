@@ -22,6 +22,13 @@ export class User implements UserInterface {
     @ApiModelProperty()
     @Column({
         nullable: false,
+        default: false
+    })
+    validated: boolean;
+
+    @ApiModelProperty()
+    @Column({
+        nullable: false,
         default: 'NOW()'
     })
     createdAt: Date;

@@ -5,13 +5,17 @@ import { UserService } from './user.service';
 import { CryptoModule } from '../crypto/crypto.module';
 import { User } from './user.entity';
 import { CryptoService } from 'src/crypto/crypto.service';
+import { ValidationModule } from 'src/validation/validation.module';
+import { EmailService } from 'src/validation/email.service';
+import { PasswordService } from 'src/validation/password.service';
 
 @Module({
     imports: [
-      TypeOrmModule.forFeature([User]),
-      CryptoModule
+        TypeOrmModule.forFeature([User]),
+        CryptoModule,
+        ValidationModule
     ],
     controllers: [UserController],
-    providers: [UserService, CryptoService]
+    providers: [UserService, CryptoService, EmailService, PasswordService]
 })
 export class UserModule {}

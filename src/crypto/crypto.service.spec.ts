@@ -15,4 +15,10 @@ describe('CryptoService', () => {
     it('should be defined', () => {
         expect(service).toBeDefined();
     });
+
+    describe('hash method', () => {
+        it('should exist', () => {
+            expect(service.hash).toBeDefined();
+        })
+    });
 });
