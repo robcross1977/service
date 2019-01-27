@@ -1,21 +1,18 @@
-import { Module } from '@nestjs/common';
-import { UserController } from './user.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserService } from './user.service';
-import { CryptoModule } from '../crypto/crypto.module';
-import { User } from './user.entity';
-import { CryptoService } from 'src/crypto/crypto.service';
-import { ValidationModule } from 'src/validation/validation.module';
-import { EmailService } from 'src/validation/email.service';
-import { PasswordService } from 'src/validation/password.service';
+import { Module, Global } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { AwsService } from "../aws/aws.service";
+import { ConfigService } from "../config/config.service";
 
+@Global()
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([User]),
-        CryptoModule,
-        ValidationModule
-    ],
-    controllers: [UserController],
-    providers: [UserService, CryptoService, EmailService, PasswordService]
+    providers: [
+        AwsService,
+        {
+          provide: UserService,
+          useValue: new UserService(new AwsService(new ConfigService)),
+        },
+      ],
+    imports: [AwsService],
+    exports: [UserService]
 })
 export class UserModule {}

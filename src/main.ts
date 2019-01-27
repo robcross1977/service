@@ -4,9 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import "reflect-metadata";
 
-declare const module: any;
-
-async function bootstrap() {
+(async () => {
     const app = await NestFactory.create(AppModule);
     app.useGlobalPipes(new ValidationPipe());
 
@@ -19,11 +17,4 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
 
     await app.listen(3000);
-
-    if (module.hot) {
-        module.hot.accept();
-        module.hot.dispose(() => app.close());
-    }
-}
-
-bootstrap();
+})();

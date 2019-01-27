@@ -4,21 +4,24 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { UserModule } from './user/user.module';
-import { CryptoModule } from './crypto/crypto.module';
 import { TypeOrmConfigService } from './type-orm-config.service';
-import { ValidationModule } from './validation/validation.module';
+import { AuthModule } from './auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
+import { AwsModule } from './aws/aws.module';
+import { RoomModule } from './room/room.module';
 
 @Module({
     imports: [
         ConfigModule,
         UserModule,
-        CryptoModule,
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmConfigService,
         }),
-        ValidationModule,
+        AuthModule, 
+        PassportModule, AwsModule, RoomModule
     ],
     controllers: [AppController],
     providers: [AppService, TypeOrmConfigService],
+    exports: [PassportModule]
 })
 export class AppModule {}
