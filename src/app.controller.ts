@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Body, Param, Query, Request, Response, Headers } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -11,8 +11,6 @@ export class AppController {
     }
 
     @Get('callback')
-    callback(@Param() code: string): string {
-        console.log({code: code})
-        return code;
+    callback(): any {
     }
 }

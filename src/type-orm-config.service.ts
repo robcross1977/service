@@ -4,18 +4,14 @@ import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 @Injectable()
 export class TypeOrmConfigService {
-    constructor(
-        private readonly configService: ConfigService
-    ) {}
-
     createTypeOrmOptions(): TypeOrmModuleOptions {
         return {
             type: 'postgres',
-            host: this.configService.get('TYPEORM_HOST'),
-            port: Number(this.configService.get('TYPEORM_PORT')),
-            username: this.configService.get('TYPEORM_USERNAME'),
-            password: this.configService.get('TYPEORM_PASSWORD'),
-            database: this.configService.get('TYPEORM_DATABASE'),
+            host: ConfigService.get('TYPEORM_HOST'),
+            port: Number(ConfigService.get('TYPEORM_PORT')),
+            username: ConfigService.get('TYPEORM_USERNAME'),
+            password: ConfigService.get('TYPEORM_PASSWORD'),
+            database: ConfigService.get('TYPEORM_DATABASE'),
             entities: [__dirname + '/**/*.entity{.ts,.js}'],
             synchronize: false
         };

@@ -1,17 +1,17 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "../config/config.service";
 import * as aws from 'aws-sdk';
 import { CognitoUser } from "./cognitoUser.dto";
 
 @Injectable()
 export class AwsService {
-    constructor(private readonly configService: ConfigService) {
+    constructor() {
         const credentials = new aws.Credentials(
-            configService.get("COGNITO_CLIENT_ID"),
-            configService.get("COGNITO_CLIENT_SECRET")
+            ConfigService.get("COGNITO_CLIENT_ID"),
+            ConfigService.get("COGNITO_CLIENT_SECRET")
         );
         aws.config.credentials = credentials;
-        aws.config.region = configService.get("AWS_REGION")
+        aws.config.region = ConfigService.get("AWS_REGION")
     }
 
     async getCognitoUser(token: string): Promise<CognitoUser> {
@@ -31,8 +31,7 @@ export class AwsService {
 
             return user;
         } catch(error) {
-            console.log(error);
-            console.log("CATCH EXPIRED TOKEN");
+            Logger.log({ error: error });
         }
         
         return null;
