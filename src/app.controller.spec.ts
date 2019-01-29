@@ -12,10 +12,22 @@ describe('AppController', () => {
         }).compile();
     });
 
-    describe('root', () => {
-        it('should return "Hello World!"', () => {
+    describe('the getHello method', () => {
+        it('should exist', () => {
             const appController = app.get<AppController>(AppController);
-            expect(appController.getHello()).toBe('Murderbeard Auth API');
+            expect(appController.getHello).toBeDefined();
+        });
+
+        it('should return a string', () => {
+            const appController = app.get<AppController>(AppController);
+            expect(typeof appController.getHello()).toBe('string');
+        });
+    });
+
+    describe('the callback method', () => {
+        it('should exist', () => {
+            const appController = app.get<AppController>(AppController);
+            expect(appController.callback).toBeDefined();
         });
     });
 });

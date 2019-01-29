@@ -1,6 +1,7 @@
 import { Module, Global } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { AwsService } from "../aws/aws.service";
+import { UserController } from "./user.controller";
 
 @Global()
 @Module({
@@ -12,6 +13,7 @@ import { AwsService } from "../aws/aws.service";
         },
       ],
     imports: [AwsService],
-    exports: [UserService]
+    exports: [UserService],
+    controllers: [UserController]
 })
 export class UserModule {}

@@ -12,7 +12,13 @@ describe('TypeOrmConfigService', () => {
         service = module.get<TypeOrmConfigService>(TypeOrmConfigService);
     });
 
-    xit('should be defined', () => {
+    it('should be defined', () => {
         expect(service).toBeDefined();
+    });
+
+    describe('the createTypeOrmOptions method', () => {
+        it('should exist', () => {
+            expect(service.createTypeOrmOptions).toBeDefined();
+        });
     });
 });

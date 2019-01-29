@@ -1,12 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoomController } from './room.controller';
+import { PassportModule } from '@nestjs/passport';
+import { RoomService } from './room.service';
 
 describe('Room Controller', () => {
     let module: TestingModule;
     
     beforeAll(async () => {
         module = await Test.createTestingModule({
-            controllers: [RoomController],
+            imports: [
+                PassportModule.register({ defaultStrategy: 'bearer' })
+            ],
+            providers: [
+                RoomService
+            ],
+            controllers: [RoomController]
         }).compile();
     });
     
