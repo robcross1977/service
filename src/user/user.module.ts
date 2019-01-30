@@ -4,7 +4,6 @@ import { AwsService } from "../aws/aws.service";
 import { UserController } from "./user.controller";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from "./user.entity";
-import { Repository } from "typeorm";
 
 @Global()
 @Module({

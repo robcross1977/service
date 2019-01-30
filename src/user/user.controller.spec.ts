@@ -2,8 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { AwsService } from '../aws/aws.service';
 import { UserService } from './user.service';
-import { User } from './user.entity';
-import { Repository } from 'typeorm';
 
 describe('User Controller', () => {
     let module: TestingModule;

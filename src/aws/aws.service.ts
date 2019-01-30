@@ -19,11 +19,9 @@ export class AwsService {
 
         try {
             const data = await cognito.getUser({AccessToken: token}).promise();
-
-            console.log({data: data})
+            
             const user = new User();
             user.id = data.Username;
-
             data.UserAttributes.forEach((attr) => {
                 if (attr.Name == 'email') {
                     user.email = attr.Value;

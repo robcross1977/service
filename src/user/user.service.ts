@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from './user.entity';
 import { AwsService } from '../aws/aws.service';
 import { UserInterface } from './user.interface';
@@ -17,9 +17,13 @@ export class UserService {
     async findOneByToken(token: string): Promise<UserInterface> {
         const user = await this.awsService.getCognitoUser(token);
 
-        console.log({user: user})
-        await this.upsertUser(user);
+        if(user) {
+            await this.upsertUser(user);
 
-        return user;
+            return user;
+        } else {
+            throw new UnauthorizedException('User wasn\'t found or token is expired');
+        }
+        
     }
 }
