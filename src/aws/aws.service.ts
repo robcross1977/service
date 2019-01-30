@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "../config/config.service";
 import * as aws from 'aws-sdk';
-import { CognitoUser } from "./cognitoUser.dto";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class AwsService {
@@ -14,13 +14,13 @@ export class AwsService {
         aws.config.region = ConfigService.get("AWS_REGION")
     }
 
-    async getCognitoUser(token: string): Promise<CognitoUser> {
+    async getCognitoUser(token: string): Promise<User> {
         const cognito = new aws.CognitoIdentityServiceProvider({});
 
         try {
             const data = await cognito.getUser({AccessToken: token}).promise();
 
-            const user = new CognitoUser();
+            const user = new User();
             user.id = data.Username;
 
             data.UserAttributes.forEach((attr) => {

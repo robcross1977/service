@@ -1,17 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { AwsService } from '../aws/aws.service';
-import {UserInterface } from './user.interface';
+import { UserInterface } from './user.interface';
+import { getRepository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-    private user: User;
+    constructor(
+        private readonly awsService: AwsService
+    ) {}
 
-    constructor(private readonly awsService: AwsService) {
-        this.user = new User();
+    async upsertUser(user: User): Promise<User> {
+        return await getRepository(User).save(user);
     }
 
     async findOneByToken(token: string): Promise<UserInterface> {
-        return await this.awsService.getCognitoUser(token);
+        const user = await this.awsService.getCognitoUser(token);
+
+        await this.upsertUser(user);
+
+        return user;
     }
 }

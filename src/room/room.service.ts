@@ -1,24 +1,39 @@
-import { Injectable, Logger, Request } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { xmppService } from '../xmpp/xmpp.service';
-import { ConfigService } from '../config/config.service';
+import { User } from '../user/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Room } from './room.entity';
+import { Repository } from 'typeorm';
+
 
 @Injectable()
 export class RoomService {
-    constructor() {}
+    constructor(
+        @InjectRepository(Room)
+        private readonly roomRepository: Repository<Room>,
+    ) {}
 
-    async create(email: string) {
+    async create(user: User) {
         Logger.log('creating a new muc room');
         let roomName = '';
-        // TO DO: This should make a room for the USER, need to get it off the token, not for the admin, this is just for test
-        xmppService.client.muc.createAnonRoom(ConfigService.get('XMPP_ADMIN_NICK')).subscribe({
+
+        xmppService.client.muc.createAnonRoom(user.email).subscribe({
             // The last value it will return here is the roomName.
             // if you just reset the variable everytime it should
             // be left with the very last one, which should be correct.
             // know it is gross, but can't think of a better way.
-            next: (data: string) => roomName = data,
+            next: (data: string) => {
+                roomName = data
+            },
             error: (error: any) => Logger.error({ error: error, message: 'Error occured while creating room'}),
             complete: async () => {
-                // TO DO: ADD USER ROOM TO DB
+                const room: Room = <Room> {
+                    roomName: roomName,
+                    user: user
+                };
+
+                await this.roomRepository.save(room);
+
                 Logger.log(`Room created - ${roomName}`);
             }
         });
