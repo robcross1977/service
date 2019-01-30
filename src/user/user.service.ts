@@ -17,6 +17,7 @@ export class UserService {
     async findOneByToken(token: string): Promise<UserInterface> {
         const user = await this.awsService.getCognitoUser(token);
 
+        console.log({user: user})
         await this.upsertUser(user);
 
         return user;
