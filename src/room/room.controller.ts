@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Request, Param, Delete } from '@nestjs/common';
+import { Controller, Post, UseGuards, Request, Param, Delete, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RoomService } from './room.service';
 
@@ -12,9 +12,15 @@ export class RoomController {
         return await this.roomService.create(req.user);
     }
 
-    @Delete(':roomName')
+    @Get()
+    @UseGuards(AuthGuard('bearer'))
+    async readAll(@Request() req: any) : Promise<any> {
+        return await this.roomService.readAll(req.user.email);
+    }
+
+    @Delete(':rooms')
     @UseGuards(AuthGuard('bearer'))
     async delete(@Request() req: any, @Param() params: any): Promise<any> {
-        return await this.roomService.delete(params.roomName, req.user.email);
+        return await this.roomService.delete(params.rooms, req.user.email);
     }
 }
