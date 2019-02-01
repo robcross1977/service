@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { xmppService } from '../xmpp/xmpp.service';
 import { User } from '../user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
