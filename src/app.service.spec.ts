@@ -1,32 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from './type-orm-config.service';
-import { AuthModule } from './auth/auth.module';
-import { PassportModule } from '@nestjs/passport';
-import { AwsModule } from './aws/aws.module';
-import { RoomModule } from './room/room.module';
-import { AppController } from './app.controller';
 
 describe('AppService', () => {
     let service: AppService;
     
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            imports: [
-                UserModule,
-                TypeOrmModule.forRootAsync({
-                    useClass: TypeOrmConfigService,
-                }),
-                AuthModule, 
-                PassportModule,
-                AwsModule,
-                RoomModule
-            ],
-            controllers: [AppController],
-            providers: [AppService, TypeOrmConfigService],
-            exports: [PassportModule]
+            providers: [AppService]
         }).compile();
         
         service = module.get<AppService>(AppService);

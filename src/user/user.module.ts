@@ -1,22 +1,22 @@
 import { Module, Global } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { AwsService } from "../aws/aws.service";
 import { UserController } from "./user.controller";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from "./user.entity";
+import { AwsModule } from "../aws/aws.module";
+import { CognitoService } from "../aws/cognito.service";
+import { AwsService } from "../aws/aws.service";
 
 @Global()
 @Module({
     imports: [
       TypeOrmModule.forFeature([User]),
-      AwsService
+      AwsModule
     ],
     providers: [
+        CognitoService,
         AwsService,
-        {
-          provide: UserService,
-          useValue: new UserService(new AwsService()),
-        },
+        UserService
     ],
     exports: [UserService],
     controllers: [UserController]

@@ -1,33 +1,140 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { AwsService } from '../aws/aws.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user.entity';
+import { CognitoService } from '../aws/cognito.service';
 import { Repository } from 'typeorm';
+import { User } from './user.entity';
+import { UnauthorizedException } from '@nestjs/common';
+
+const cognitoServiceProvider = {
+    provide: CognitoService,
+    useValue: {
+        getCognitoUser(token: string) {
+            return token;
+        }
+    }
+}
+
+export class UserRepository extends Repository<User> {}
+
+const testUser = {
+    Username: 'testUser',
+    UserAttributes : [{Name: 'email', Value: 'testUser@test.com'}]
+}
+
+const testToken = 'no matter';
 
 describe('UserService', () => {
-    let service: UserService;
-    
+    let userService: UserService;
+    let cognitoService: CognitoService;
+    let userRepository: UserRepository;
+
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                AwsService,
+                UserService,
+                cognitoServiceProvider,                 
                 {
-                  provide: UserService,
-                  useValue: new UserService(new AwsService())
-                },
-              ],
-            imports: [
-                AwsService,
-                TypeOrmModule.forFeature([User])
-            ],
-            exports: [UserService]
+                    provide: UserRepository,
+                    useClass: UserRepository
+                }
+            ]
         }).compile();
 
-        service = module.get<UserService>(UserService);
+        userService = module.get<UserService>(UserService);
+        cognitoService = module.get<CognitoService>(CognitoService);
+        userRepository = module.get<UserRepository>(UserRepository);
     });
     
     it('should be defined', () => {
-        expect(service).toBeDefined();
+        // arrange
+        // act
+        // assert
+        expect(userService).toBeDefined();
+    });
+
+    describe('upsertUser method', () => {
+        it('should be defined', () => {
+            // arrange
+            // act
+            // assert
+            expect(userService.upsertUser).toBeDefined();
+        });
+
+        it('should save the user (which upserts)', async () => {
+            // arrange
+            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+
+            // act
+            await userService.upsertUser(<User>{
+                id: testUser.Username,
+                email: testUser.UserAttributes[0].Value
+            });
+
+            // assert
+            expect(userRepository.save).toHaveBeenCalledTimes(1);
+            expect(userRepository.save).toHaveBeenCalledWith(<User>{
+                id: testUser.Username,
+                email: testUser.UserAttributes[0].Value
+            });
+        });
+    });
+
+    describe('findOneByToken method', () => {
+        it('should be defined', () => {
+            // arrange
+            // act
+            // assert
+            expect(userService).toBeDefined();
+        });
+
+        it('should call cognitoService.getCognitoUser', async () => {
+            // arrange
+            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(testUser);
+            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+
+            // act
+            await userService.findOneByToken(testToken);
+
+            // assert
+            expect(cognitoService.getCognitoUser).toBeCalledTimes(1);
+            expect(cognitoService.getCognitoUser).toBeCalledWith(testToken);
+        });
+
+        it('if cognitoService.getCognitoUser returns a user it should upsert it', async () => {
+            // arrange
+            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(testUser);
+            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+
+            // act
+            await userService.findOneByToken(testToken);
+
+            // assert
+            expect(userRepository.save).toHaveBeenCalledTimes(1);
+            expect(userRepository.save).toBeCalledWith(testUser);
+        });
+
+        it('if cognitoService.getCognitoUser returns a user it should return it', async () => {
+            // arrange
+            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(testUser);
+            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+
+            // act
+            const result = await userService.findOneByToken(testToken);
+
+            // assert
+            expect(result).toEqual(testUser);
+        });
+
+        it('should throw an UnauthorizedException if cognitoService.getCognitoUser returns nothing', done => {
+            // arrange
+            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(undefined);
+            
+            // act
+            userService.findOneByToken(testToken)
+                .catch(e => {
+                    expect(e).toBeInstanceOf(UnauthorizedException);
+                    done();
+                });
+        });
     });
 });

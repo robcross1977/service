@@ -4,9 +4,9 @@ import { UserInterface } from '../user/user.interface';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly usersService: UserService) {}
+    constructor(private readonly userService: UserService) {}
 
     async validateUser(token: string): Promise<UserInterface> {
-        return await this.usersService.findOneByToken(token);
+        return await this.userService.findOneByToken(token);
     }
 }
