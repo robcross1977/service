@@ -50,7 +50,7 @@ describe('HttpStrategy', () => {
 
         it('should call authService.validateUser one time, passing in the token', async () => {
             // arrange
-            jest.spyOn(authService, 'validateUser').mockResolvedValue(testUser);
+            jest.spyOn(authService, 'validateUser').mockResolvedValue(new Promise<UserInterface>(resolve => resolve(testUser)));
 
             // act
             await httpStrategy.validate(testToken);
@@ -62,7 +62,7 @@ describe('HttpStrategy', () => {
 
         it('should return the user if authService.validateUser returns a user', async () => {
             // arrange
-            jest.spyOn(authService, 'validateUser').mockResolvedValue(testUser);
+            jest.spyOn(authService, 'validateUser').mockResolvedValue(new Promise<UserInterface>(resolve => resolve(testUser)));
 
             // act
             const result = await httpStrategy.validate(testToken);

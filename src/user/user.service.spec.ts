@@ -21,6 +21,11 @@ const testUser = {
     UserAttributes : [{Name: 'email', Value: 'testUser@test.com'}]
 }
 
+const testUserInterface = <User> {
+    id: testUser.Username,
+    email: testUser.UserAttributes[0].Value
+};
+
 const testToken = 'no matter';
 
 describe('UserService', () => {
@@ -62,7 +67,7 @@ describe('UserService', () => {
 
         it('should save the user (which upserts)', async () => {
             // arrange
-            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+            jest.spyOn(userRepository, 'save').mockResolvedValue(new Promise<User>(resolve => resolve(testUserInterface)));
 
             // act
             await userService.upsertUser(<User>{
@@ -72,10 +77,7 @@ describe('UserService', () => {
 
             // assert
             expect(userRepository.save).toHaveBeenCalledTimes(1);
-            expect(userRepository.save).toHaveBeenCalledWith(<User>{
-                id: testUser.Username,
-                email: testUser.UserAttributes[0].Value
-            });
+            expect(userRepository.save).toHaveBeenCalledWith(testUserInterface);
         });
     });
 
@@ -89,8 +91,8 @@ describe('UserService', () => {
 
         it('should call cognitoService.getCognitoUser', async () => {
             // arrange
-            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(testUser);
-            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(new Promise<User>(resolve => resolve(testUserInterface)));
+            jest.spyOn(userRepository, 'save').mockResolvedValue(new Promise<User>(resolve => resolve(testUserInterface)));
 
             // act
             await userService.findOneByToken(testToken);
@@ -102,27 +104,27 @@ describe('UserService', () => {
 
         it('if cognitoService.getCognitoUser returns a user it should upsert it', async () => {
             // arrange
-            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(testUser);
-            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(new Promise<User>(resolve => resolve(testUserInterface)));
+            jest.spyOn(userRepository, 'save').mockResolvedValue(new Promise<User>(resolve => resolve(testUserInterface)));
 
             // act
             await userService.findOneByToken(testToken);
 
             // assert
             expect(userRepository.save).toHaveBeenCalledTimes(1);
-            expect(userRepository.save).toBeCalledWith(testUser);
+            expect(userRepository.save).toBeCalledWith(testUserInterface);
         });
 
         it('if cognitoService.getCognitoUser returns a user it should return it', async () => {
             // arrange
-            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(testUser);
-            jest.spyOn(userRepository, 'save').mockResolvedValue(testUser);
+            jest.spyOn(cognitoService, 'getCognitoUser').mockResolvedValue(new Promise<User>(resolve => resolve(testUserInterface)));
+            jest.spyOn(userRepository, 'save').mockResolvedValue(new Promise<User>(resolve => resolve(testUserInterface)));
 
             // act
             const result = await userService.findOneByToken(testToken);
 
             // assert
-            expect(result).toEqual(testUser);
+            expect(result).toEqual(testUserInterface);
         });
 
         it('should throw an UnauthorizedException if cognitoService.getCognitoUser returns nothing', done => {

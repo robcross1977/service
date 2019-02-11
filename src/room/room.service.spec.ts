@@ -10,7 +10,7 @@ const testUser = {
     email: 'testUser@test.com'
 };
 
-const testRoom = {
+const testRoom = <Room> {
     roomName: 'testRoom',
     user: testUser
 };
@@ -60,7 +60,7 @@ describe('RoomService', () => {
 
         it('should call roomRepository.find', async () => {
             // arrange
-            jest.spyOn(roomRepository, "find").mockResolvedValue(testRoom);
+            jest.spyOn(roomRepository, "find").mockResolvedValue(new Promise<Room[]>(resolve => resolve([testRoom])));
 
             // act
             await roomService.readAll(testUser.email);
@@ -128,7 +128,7 @@ describe('RoomService', () => {
 
         it('should throw if the roomname is falsey', done => {
             // arrange
-            jest.spyOn(roomService, 'userOwnsRoom').mockResolvedValue(true);
+            jest.spyOn(roomService, 'userOwnsRoom').mockResolvedValue(new Promise<boolean>(resolve => resolve(true)));
 
             // act
             roomService.deleteRoom('', testUser.email)
@@ -145,7 +145,10 @@ describe('RoomService', () => {
         // I can't get this test to work for some reason even though it works when I run the service
         it('should throw if the user does not own the room', done => {
             // arrange
-            jest.spyOn(roomService, 'userOwnsRoom').mockResolvedValue(false);
+            jest.spyOn(roomService, 'userOwnsRoom').mockRejectedValue({
+                name: 'RoomCreateError',
+                message: `failed to destroy room: ${testRoom.roomName}, please check the name of the room and try again`
+            });
 
             // act
             roomService.deleteRoom(testRoom.roomName, testUser.email)
@@ -170,7 +173,7 @@ describe('RoomService', () => {
 
         it('should return true if a user is found', async () => {
             // arrange
-            jest.spyOn(roomRepository, 'find').mockResolvedValue(testRoom);
+            jest.spyOn(roomRepository, 'find').mockResolvedValue(new Promise<Room[]>(resolve => resolve([testRoom])));
             
             // act
             // assert

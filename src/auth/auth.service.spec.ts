@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
+import { UserInterface} from '../user/user.interface';
 
 const userServiceProvider = {
   provide: UserService,
@@ -42,7 +43,7 @@ describe('AuthService', () => {
         it('should return the result of a call to userService.findOneByToken', async () => {
             // arrange
             const token = 'no matter';
-            jest.spyOn(userService, 'findOneByToken').mockResolvedValue(true);
+            jest.spyOn(userService, 'findOneByToken').mockResolvedValue(new Promise<UserInterface>(resolve => resolve(<UserInterface> { id: 'testUser', email: 'test@test.com'})));
 
             // act
             const result = await authService.validateUser(token);
