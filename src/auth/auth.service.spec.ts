@@ -4,12 +4,12 @@ import { UserService } from '../user/user.service';
 import { UserInterface} from '../user/user.interface';
 
 const userServiceProvider = {
-  provide: UserService,
-  useValue: {
-    findOneByToken(token: string) {
-        return true;
+    provide: UserService,
+    useValue: {
+        findOneByToken(token: string) {
+            return true;
+        }
     }
-  }
 }
 
 describe('AuthService', () => {

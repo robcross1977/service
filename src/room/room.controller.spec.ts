@@ -3,6 +3,7 @@ import { RoomController } from './room.controller';
 import { RoomService } from './room.service';
 import { Room } from './room.entity';
 import { Repository } from 'typeorm';
+import { RoomConfig } from './roomConfig';
 
 const testUser = {
     id: 'testUser',
@@ -64,11 +65,11 @@ describe('Room Controller', () => {
             jest.spyOn(roomService, 'create');
 
             // act
-            const result = await roomController.create({user: testUser});
+            const result = await roomController.create({user: testUser}, <RoomConfig>{});
 
             // assert
             expect(roomService.create).toBeCalledTimes(1);
-            expect(roomService.create).toBeCalledWith(testUser);
+            expect(roomService.create).toBeCalledWith(testUser, <RoomConfig>{});
             expect(result).toEqual(testUser);
         });
     });

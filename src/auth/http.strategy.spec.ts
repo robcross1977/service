@@ -12,12 +12,12 @@ const testUser = <UserInterface> {
 }
 
 const authServiceProvider = {
-  provide: AuthService,
-  useValue: {
-    validateUser(token: string) {
-        return testUser;
+    provide: AuthService,
+    useValue: {
+        validateUser(token: string) {
+            return testUser;
+        }
     }
-  }
 }
 
 describe('HttpStrategy', () => {

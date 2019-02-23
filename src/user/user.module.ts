@@ -10,8 +10,8 @@ import { AwsService } from "../aws/aws.service";
 @Global()
 @Module({
     imports: [
-      TypeOrmModule.forFeature([User]),
-      AwsModule
+        TypeOrmModule.forFeature([User]),
+        AwsModule
     ],
     providers: [
         CognitoService,

@@ -3,23 +3,19 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, INestApplication, INestExpressApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module';
-import { xmppService } from './xmpp/xmpp.service';
+import { EndpointLoggingInterceptor } from './endpoint-logging.interceptor';
+
 
 (async () => {
-    xmppService.client.subject('session:started').subscribe({
-        next: async (): Promise<void> => {
-            Logger.log('XMPP session:started, starting express app');
+    Logger.log('starting express app');
 
-            const app = await NestFactory.create(AppModule);
-            app.useGlobalPipes(new ValidationPipe());
-        
-            swaggerSetup(app);
-        
-            await app.listen(3000);
-        }
-    });
-    
-    xmppService.connect();
+    const app = await NestFactory.create(AppModule);
+    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalInterceptors(new EndpointLoggingInterceptor());
+
+    swaggerSetup(app);
+
+    await app.listen(3000);
 })();
 
 const swaggerSetup = (app: INestApplication & INestExpressApplication): void => {

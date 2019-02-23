@@ -11,6 +11,5 @@ export class AppController {
     }
 
     @Get('callback')
-    callback(): any {
-    }
+    callback(): any {}
 }

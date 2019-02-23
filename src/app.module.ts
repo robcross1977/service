@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { AwsModule } from './aws/aws.module';
 import { RoomModule } from './room/room.module';
+import { EjabberdHttpModule } from './ejabberd-http/ejabberd-http.module';
+import { RoomDeleteService } from './room/room-delete.service';
 
 @Module({
     imports: [
@@ -18,10 +20,11 @@ import { RoomModule } from './room/room.module';
         AuthModule, 
         PassportModule,
         AwsModule,
-        RoomModule
+        RoomModule,
+        EjabberdHttpModule
     ],
     controllers: [AppController],
-    providers: [AppService, TypeOrmConfigService],
+    providers: [AppService, TypeOrmConfigService, RoomDeleteService],
     exports: [PassportModule]
 })
 export class AppModule {}

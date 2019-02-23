@@ -1,4 +1,4 @@
-import { Injectable, Logger, Inject } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { User } from "../user/user.entity";
 import { AwsService } from "./aws.service";
 import { PromiseResult } from "aws-sdk/lib/request";
